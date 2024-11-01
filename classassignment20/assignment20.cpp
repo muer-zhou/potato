@@ -1,6 +1,6 @@
 // ArrayUtils.cpp
 #include <iostream>
-#include "ArrayUtils.h"
+#include "assignment20.h"
 
 namespace ArrayOps {
     int* expand(int *oldArr, int oldSize, int newSize) {
