@@ -9,10 +9,6 @@ This program demonstrates the use of smart pointers (`shared_ptr`) for dynamic m
 - The user can input an indefinite number of values until they type `'s'` to stop.
 - After stopping, the program calculates the sum of all input numbers and prints the array and the sum.
 
-## Files
-- `assignment21.cpp`: Contains the main logic of the program, including functions to expand the array, fill it with numbers, and print the result.
-- `README.md`: This file, explaining the project, its purpose, and how to run it.
-
 ## How to Use
 1. **Compile the program** using a C++ compiler:
    ```bash
@@ -68,3 +64,17 @@ The sum of the array will be: 60
 - The program expands the array as needed when new numbers are added.
 - The array doubles in size when filled to capacity to accommodate more numbers, which is a common practice to optimize dynamic array resizing.
 
+
+## Files
+
+- `assignment21.h` - Declares the `expand` and `printArray` functions.
+- `assignment20.cpp` - Implements the `expand` and `printArray` functions.
+- `main.cpp` - Main program that uses the functions to manage a dynamically expanding array.
+
+## Compilation and Execution
+
+To compile and run the program, use:
+
+```bash
+g++ main.cpp assignment20.cpp -o assignment20
+./assignment20
