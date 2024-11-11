@@ -1,3 +1,11 @@
-# Default ignored files
-/shelf/
-/workspace.xml
+# Ignore IDE and editor settings
+.idea/
+.vscode/
+
+# Ignore build artifacts
+*.exe
+*.out
+*.o
+
+# Ignore OS-specific files
+.DS_Store
