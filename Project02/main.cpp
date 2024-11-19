@@ -1,42 +1,25 @@
 #include "QuantumHarmonicOscillator.h"
+#include "MatrixCalculator.h"
 #include <iostream>
 #include <vector>
 #include <complex>
 #include <iomanip>
-#include <cmath>
 
-// Helper function to print vectors
-template <typename T>
-void printVector(const std::vector<T>& vec) {
+void printComplexVector(const std::vector<std::complex<double>>& vec) {
     for (const auto& val : vec) {
-        std::cout << std::fixed << std::setprecision(6) << val << " ";
-    }
-    std::cout << std::endl;
-}
-
-// Helper function to print matrices
-void printMatrix(const std::vector<std::vector<double>>& matrix) {
-    for (const auto& row : matrix) {
-        for (const auto& element : row) {
-            std::cout << std::setw(10) << std::fixed << std::setprecision(6) << element << " ";
-        }
-        std::cout << std::endl;
+        std::cout << std::real(val) << " + " << std::imag(val) << "i\n";
     }
 }
 
 int main() {
     try {
-        // Collect user inputs
+        std::cout << "=== Quantum Harmonic Oscillator Simulation ===\n";
         int gridPoints;
         double mass, omega, xMin, xMax, time;
 
-        std::cout << "=== Quantum Harmonic Oscillator Simulation ===\n";
+        // Input parameters
         std::cout << "Enter the number of grid points: ";
         std::cin >> gridPoints;
-
-        if (gridPoints < 2) {
-            throw std::invalid_argument("Grid points must be at least 2.");
-        }
 
         std::cout << "Enter the mass of the particle: ";
         std::cin >> mass;
@@ -50,42 +33,38 @@ int main() {
         std::cout << "Enter the maximum x value (xMax): ";
         std::cin >> xMax;
 
-        if (xMax <= xMin) {
-            throw std::invalid_argument("xMax must be greater than xMin.");
-        }
-
         std::cout << "Enter the time for time evolution (t): ";
         std::cin >> time;
 
-        // Construct the Hamiltonian matrix
-        std::vector<std::vector<double>> hamiltonian = constructHamiltonian(gridPoints, mass, omega, xMin, xMax);
+        // Construct the Hamiltonian
+        Matrix hamiltonian = constructHamiltonian(gridPoints, mass, omega, xMin, xMax);
         std::cout << "\nHamiltonian Matrix:\n";
-        printMatrix(hamiltonian);
+        hamiltonian.displayMatrix();
 
         // Compute eigenvalues and eigenvectors
-        std::vector<double> eigenvalues;
-        std::vector<std::vector<double>> eigenvectors;
-        computeEigenvaluesAndEigenvectors(hamiltonian, eigenvalues, eigenvectors);
+        std::vector<double> eigenvalues = hamiltonian.calculateEigenvalues(hamiltonian, 100, 1e-10);
+        Matrix Q(gridPoints, gridPoints), R(gridPoints, gridPoints);
+        hamiltonian.qrDecomposition(hamiltonian, Q, R);
 
         std::cout << "\nEigenvalues:\n";
-        printVector(eigenvalues);
-
-        // Collect initial wavefunction from the user
-        std::vector<std::complex<double>> initialState(gridPoints, 0.0);
-        std::cout << "\nEnter the initial wavefunction values (real part only, separated by spaces):\n";
-        for (int i = 0; i < gridPoints; ++i) {
-            double realPart;
-            std::cin >> realPart;
-            initialState[i] = std::complex<double>(realPart, 0.0);
+        for (double val : eigenvalues) {
+            std::cout << std::fixed << std::setprecision(6) << val << "\n";
         }
 
-        // Time evolution
-        std::vector<std::complex<double>> evolvedState = timeEvolve(eigenvectors, eigenvalues, initialState, time);
+        // Generate a Gaussian wavefunction
+        std::vector<std::complex<double>> initialState(gridPoints, 0.0);
+        double dx = (xMax - xMin) / (gridPoints - 1);
+        for (int i = 0; i < gridPoints; ++i) {
+            double x = xMin + i * dx;
+            initialState[i] = std::exp(-x * x); // Gaussian wavefunction
+        }
+
+        // Perform time evolution
+        auto evolvedState = timeEvolve(Q, eigenvalues, initialState, time);
 
         std::cout << "\nTime-Evolved Wavefunction (t = " << time << "):\n";
-        for (const auto& value : evolvedState) {
-            std::cout << std::real(value) << " + " << std::imag(value) << "i\n";
-        }
+        printComplexVector(evolvedState);
+
     } catch (const std::exception& e) {
         std::cerr << "Error: " << e.what() << std::endl;
     }
