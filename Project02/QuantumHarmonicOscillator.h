@@ -2,19 +2,20 @@
 #define QUANTUMHARMONICOSCILLATOR_H
 
 #include <vector>
-#include <stdexcept> // For exception handling
+#include <complex>
 
-/**
- * Constructs the Hamiltonian matrix for a quantum harmonic oscillator.
- *
- * @param gridPoints The number of discrete grid points for the spatial dimension.
- * @param mass The mass of the particle in the oscillator.
- * @param omega The angular frequency of the oscillator.
- * @param xMin The minimum value of the spatial domain.
- * @param xMax The maximum value of the spatial domain.
- * @return A 2D vector representing the Hamiltonian matrix.
- * @throws std::invalid_argument If gridPoints < 2.
- */
+// Constructs the Hamiltonian matrix
 std::vector<std::vector<double>> constructHamiltonian(int gridPoints, double mass, double omega, double xMin, double xMax);
 
-#endif // QUANTUMHARMONICOSCILLATOR_H
+// Computes eigenvalues and eigenvectors of the Hamiltonian
+void computeEigenvaluesAndEigenvectors(const std::vector<std::vector<double>>& hamiltonian, 
+    std::vector<double>& eigenvalues, 
+    std::vector<std::vector<double>>& eigenvectors);
+
+// Computes the time-evolved wavefunction
+std::vector<std::complex<double>> timeEvolve(const std::vector<std::vector<double>>& eigenvectors, 
+    const std::vector<double>& eigenvalues, 
+    const std::vector<std::complex<double>>& initialState, 
+    double time, double hbar = 1.0);
+
+#endif

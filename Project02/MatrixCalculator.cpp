@@ -67,7 +67,7 @@ Matrix Matrix::operator-(const Matrix& other) const {
     return result;
 }
 
-// Matrix Multiplication
+// Matrix Dot Product 
 Matrix Matrix::multiply(const Matrix& A, const Matrix& B) {
     if (A.getCols() != B.getRows()) {
         throw std::invalid_argument("Matrix dimensions must match for multiplication.");
@@ -86,24 +86,48 @@ Matrix Matrix::multiply(const Matrix& A, const Matrix& B) {
 // QR Decomposition
 void Matrix::qrDecomposition(const Matrix& A, Matrix& Q, Matrix& R) {
     int rows = A.getRows(), cols = A.getCols();
-    Q = Matrix(rows, cols);
-    R = Matrix(cols, cols);
+    Q = Matrix(rows, cols);  // Initialize Q matrix
+    R = Matrix(cols, cols);  // Initialize R matrix
 
     for (int k = 0; k < cols; k++) {
-        for (int i = 0; i < rows; i++) Q.data[i][k] = A.data[i][k];
+        // Copy the k-th column of A into Q
+        for (int i = 0; i < rows; i++) {
+            Q.data[i][k] = A.data[i][k];
+        }
+
+        // Orthogonalize against previous columns
         for (int j = 0; j < k; j++) {
             double dot = 0.0;
-            for (int i = 0; i < rows; i++) dot += Q.data[i][j] * A.data[i][k];
+
+            // Compute dot product of Q[:, j] and A[:, k]
+            for (int i = 0; i < rows; i++) {
+                dot += Q.data[i][j] * A.data[i][k];
+            }
+
             R.data[j][k] = dot;
-            for (int i = 0; i < rows; i++) Q.data[i][k] -= dot * Q.data[i][j];
+
+            // Subtract projection of Q[:, j] from Q[:, k]
+            for (int i = 0; i < rows; i++) {
+                Q.data[i][k] -= dot * Q.data[i][j];
+            }
         }
+
+        // Compute the norm of Q[:, k]
         double norm = 0.0;
-        for (int i = 0; i < rows; i++) norm += Q.data[i][k] * Q.data[i][k];
+        for (int i = 0; i < rows; i++) {
+            norm += Q.data[i][k] * Q.data[i][k];
+        }
+
         norm = std::sqrt(norm);
         R.data[k][k] = norm;
-        for (int i = 0; i < rows; i++) Q.data[i][k] /= norm;
+
+        // Normalize Q[:, k]
+        for (int i = 0; i < rows; i++) {
+            Q.data[i][k] /= norm;
+        }
     }
 }
+ 
 
 // Eigenvalue Calculation
 std::vector<double> Matrix::calculateEigenvalues(Matrix A, int maxIterations, double tolerance) {
