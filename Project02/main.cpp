@@ -4,20 +4,65 @@
 #include <vector>
 #include <complex>
 #include <iomanip>
+#include <fstream> // For exporting data
+#include <chrono>
+#include <thread> // For animation
 
+// Function to print complex vectors
 void printComplexVector(const std::vector<std::complex<double>>& vec) {
     for (const auto& val : vec) {
-        std::cout << std::real(val) << " + " << std::imag(val) << "i\n";
+        std::cout << std::fixed << std::setprecision(6) << std::real(val) << " + " << std::imag(val) << "i\n";
     }
+}
+
+// Function to export wavefunction data to a file
+void exportWavefunctionData(const std::vector<std::vector<std::complex<double>>>& wavefunctions,
+                            const std::vector<double>& times, const std::string& filename) {
+    std::ofstream file(filename);
+
+    for (size_t t = 0; t < wavefunctions.size(); ++t) {
+        file << "Time: " << times[t] << "\n";
+        for (const auto& value : wavefunctions[t]) {
+            file << std::real(value) << " " << std::imag(value) << "\n";
+        }
+        file << "\n"; // Separate time steps
+    }
+
+    file.close();
+    std::cout << "Wavefunction data exported to " << filename << "\n";
+}
+
+// Function to simulate time evolution and display results
+void simulateTimeEvolution(const Matrix& eigenvectors, const std::vector<double>& eigenvalues,
+                           const std::vector<std::complex<double>>& initialState, double maxTime, double timeStep) {
+    std::vector<std::vector<std::complex<double>>> wavefunctions;
+    std::vector<double> times;
+
+    for (double t = 0; t <= maxTime; t += timeStep) {
+        auto evolvedState = timeEvolve(eigenvectors, eigenvalues, initialState, t);
+        wavefunctions.push_back(evolvedState);
+        times.push_back(t);
+
+        // Display current wavefunction
+        std::cout << "\nTime = " << t << ":\n";
+        printComplexVector(evolvedState);
+
+        // Add delay to simulate animation (optional)
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    }
+
+    // Export wavefunction data
+    exportWavefunctionData(wavefunctions, times, "wavefunction_evolution.dat");
 }
 
 int main() {
     try {
         std::cout << "=== Quantum Harmonic Oscillator Simulation ===\n";
-        int gridPoints;
-        double mass, omega, xMin, xMax, time;
 
         // Input parameters
+        int gridPoints;
+        double mass, omega, xMin, xMax, maxTime, timeStep;
+
         std::cout << "Enter the number of grid points: ";
         std::cin >> gridPoints;
 
@@ -33,8 +78,11 @@ int main() {
         std::cout << "Enter the maximum x value (xMax): ";
         std::cin >> xMax;
 
-        std::cout << "Enter the time for time evolution (t): ";
-        std::cin >> time;
+        std::cout << "Enter the total time for time evolution (maxTime): ";
+        std::cin >> maxTime;
+
+        std::cout << "Enter the time step for simulation: ";
+        std::cin >> timeStep;
 
         // Construct the Hamiltonian
         Matrix hamiltonian = constructHamiltonian(gridPoints, mass, omega, xMin, xMax);
@@ -59,11 +107,8 @@ int main() {
             initialState[i] = std::exp(-x * x); // Gaussian wavefunction
         }
 
-        // Perform time evolution
-        auto evolvedState = timeEvolve(Q, eigenvalues, initialState, time);
-
-        std::cout << "\nTime-Evolved Wavefunction (t = " << time << "):\n";
-        printComplexVector(evolvedState);
+        // Simulate time evolution
+        simulateTimeEvolution(Q, eigenvalues, initialState, maxTime, timeStep);
 
     } catch (const std::exception& e) {
         std::cerr << "Error: " << e.what() << std::endl;

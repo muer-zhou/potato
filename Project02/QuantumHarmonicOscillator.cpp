@@ -36,7 +36,7 @@ Matrix constructHamiltonian(int gridPoints, double mass, double omega, double xM
 
 // Time-evolve the wavefunction
 std::vector<std::complex<double>> timeEvolve(const Matrix& eigenvectors, const std::vector<double>& eigenvalues,
-                                             const std::vector<std::complex<double>>& initialState, double time, double hbar) {
+    const std::vector<std::complex<double>>& initialState, double time, double hbar) {
     int n = eigenvalues.size();
     std::vector<std::complex<double>> evolvedState(n, 0.0);
 
