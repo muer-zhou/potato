@@ -1,19 +1,19 @@
 #include "assignment22.h"
-#include <sstream> // For stringstream
+#include <cctype> // For isspace
+#include <string>
 
-namespace methods {
-    std::pair<std::string, std::string> extractFirstAndLastName(const std::string& fullName) {
-        std::istringstream stream(fullName);
-        std::string firstName, lastName, word;
-        
-        // Extract the first name (first word in the stream)
-        stream >> firstName;
-
-        // Extract the last name (last word in the stream)
-        while (stream >> word) {
-            lastName = word;
-        }
-
-        return {firstName, lastName};
+std::string extractFirstName(const std::string& fullName) {
+    size_t spaceIndex = fullName.find(' ');
+    if (spaceIndex != std::string::npos) {
+        return fullName.substr(0, spaceIndex); 
     }
+    return ""; 
+}
+
+std::string extractLastName(const std::string& fullName) {
+    size_t spaceIndex = fullName.find(' ');
+    if (spaceIndex != std::string::npos) {
+        return fullName.substr(spaceIndex + 1); 
+    }
+    return ""; 
 }

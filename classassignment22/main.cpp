@@ -1,19 +1,20 @@
 #include <iostream>
 #include "assignment22.h"
 
-using namespace std;
-using namespace methods;
-
 int main() {
-    string fullName;
-    
-    cout << "Enter the full name: ";
-    getline(cin, fullName); // Get the full name from the user
+    std::string fullName;
+    std::cout << "Enter the full name (first and last name): ";
+    std::getline(std::cin, fullName); 
 
-    auto [firstName, lastName] = extractFirstAndLastName(fullName);
+    std::string firstName = extractFirstName(fullName);
+    std::string lastName = extractLastName(fullName);
 
-    cout << "First name: " << firstName << endl;
-    cout << "Last name: " << lastName << endl;
+    if (!firstName.empty() && !lastName.empty()) {
+        std::cout << "First Name: " << firstName << "\n";
+        std::cout << "Last Name: " << lastName << "\n";
+    } else {
+        std::cout << "Invalid input. Please enter a full name with both first and last names.\n";
+    }
 
     return 0;
 }
