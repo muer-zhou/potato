@@ -1,16 +1,16 @@
-// assignment24.h
 #ifndef ASSIGNMENT24_H
 #define ASSIGNMENT24_H
 
 #include <string>
 
-using namespace std;
+namespace assignment24 {
+    struct Customer {
+        int id;
+        std::string name;
+        std::string email;
 
-// Structure definition for Customer
-struct Customer {
-    int id;
-    string name;
-    string email;
-};
+        void printDetails() const;
+    };
+}
 
-#endif
+#endif 
