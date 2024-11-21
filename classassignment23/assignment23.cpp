@@ -1,12 +1,20 @@
 #include "assignment23.h"
+#include <cctype> 
 
-// Overload equality operator
-bool Point::operator==(const Point& other) const {
-    return (x == other.x) && (y == other.y);
-}
+bool isValidCustomerNumber(const std::string& customerNumber) {
+    if (customerNumber.length() != 6) {
+        return false;
+    }
 
-// Overload stream insertion operator
-std::ostream& operator<<(std::ostream& os, const Point& point) {
-    os << "(" << point.x << ", " << point.y << ")";
-    return os;
+    if (!std::isalpha(customerNumber[0]) || !std::isalpha(customerNumber[1])) {
+        return false;
+    }
+
+    for (size_t i = 2; i < 6; ++i) {
+        if (!std::isdigit(customerNumber[i])) {
+            return false;
+        }
+    }
+
+    return true; 
 }

@@ -1,27 +1,20 @@
-#include <iostream>
 #include "assignment23.h"
+#include <cctype> 
 
-int main() {
-    Point p1{3.0, 4.5};
-    Point p2{3.0, 4.5};
-    Point p3{1.0, 2.0};
-
-    // Test equality operator
-    if (p1 == p2) {
-        std::cout << "p1 and p2 are equal." << std::endl;
-    } else {
-        std::cout << "p1 and p2 are not equal." << std::endl;
+bool isValidCustomerNumber(const std::string& customerNumber) {
+    if (customerNumber.length() != 6) {
+        return false;
     }
 
-    if (p1 == p3) {
-        std::cout << "p1 and p3 are equal." << std::endl;
-    } else {
-        std::cout << "p1 and p3 are not equal." << std::endl;
+    if (!std::isalpha(customerNumber[0]) || !std::isalpha(customerNumber[1])) {
+        return false;
     }
 
-    // Test stream insertion operator
-    std::cout << "Point p1: " << p1 << std::endl;
-    std::cout << "Point p3: " << p3 << std::endl;
+    for (size_t i = 2; i < 6; ++i) {
+        if (!std::isdigit(customerNumber[i])) {
+            return false;
+        }
+    }
 
-    return 0;
+    return true; 
 }
