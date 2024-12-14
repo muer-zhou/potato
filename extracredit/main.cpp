@@ -1,41 +1,28 @@
+#include "DateTime.h"
 #include <iostream>
-#include "DateTime.hpp"
 
 int main() {
-    try {
-        // Test basic functionality
-        DateTime dt(2024, 3, 15, 14, 30, 45, -8.0);  // Pacific Time
-        
-        // Test formatting
-        std::cout << "Original DateTime: " 
-                  << dt.format("YYYY-MM-DD HH:MM:SS") << std::endl;
-        
-        // Test calendar operations
-        std::cout << "Day of Week: " << dt.getDayOfWeek() << std::endl;
-        std::cout << "Days in Month: " << dt.getDaysInMonth() << std::endl;
-        
-        // Test time zone adjustment
-        dt.adjustTimeZone(-5.0);  // Convert to Eastern Time
-        std::cout << "After timezone adjustment: " 
-                  << dt.format("YYYY-MM-DD HH:MM:SS") << std::endl;
-        
-        // Test DST
-        dt.applyDST(true);
-        std::cout << "After applying DST: " 
-                  << dt.format("YYYY-MM-DD HH:MM:SS") << std::endl;
-        
-        // Test serialization
-        std::string serialized = dt.serialize();
-        std::cout << "Serialized: " << serialized << std::endl;
-        
-        DateTime deserialized = DateTime::deserialize(serialized);
-        std::cout << "Deserialized: " 
-                  << deserialized.format("YYYY-MM-DD HH:MM:SS") << std::endl;
-        
-    } catch (const std::exception& e) {
-        std::cerr << "Error: " << e.what() << std::endl;
-        return 1;
-    }
-    
+    // Create a DateTime object with a time zone offset
+    DateTime dt1(2024, 12, 13, 14, 30, 45, -8); // PST
+    DateTime dt2(2024, 12, 14, 10, 25, 30, 0);  // UTC
+
+    // Adjust time zone
+    dt1.adjustTimeZone(0); // Convert PST to UTC
+    std::cout << "After time zone adjustment: " << dt1.serialize() << std::endl;
+
+    // Apply daylight saving time
+    dt1.applyDaylightSaving(true);
+    std::cout << "After DST adjustment: " << dt1.serialize() << std::endl;
+
+    // Get day of the week
+    std::cout << "Day of the week: " << dt1.getDayOfWeek() << std::endl;
+
+    // Serialize and deserialize
+    std::string serialized = dt1.serialize();
+    std::cout << "Serialized: " << serialized << std::endl;
+
+    DateTime deserialized = DateTime::deserialize(serialized);
+    std::cout << "Deserialized: " << deserialized.serialize() << std::endl;
+
     return 0;
 }
